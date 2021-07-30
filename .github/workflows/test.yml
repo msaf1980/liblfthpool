@@ -1,0 +1,61 @@
+name: tests
+
+on: [push]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu 20.04 GCC", artifact: "Linux.tar.xz",
+            os: ubuntu-20.04,
+            build_type: "Release", cc: "gcc", cxx: "g++"
+          }
+        - {
+            name: "Ubuntu 20.04 Clang", artifact: "Linux.tar.xz",
+            os: ubuntu-20.04,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+        - {
+            name: "macOS 10.15 Clang", artifact: "macOS.tar.xz",
+            os: macos-10.15,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Dependecies
+      run:   |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          sudo sh -c "echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf" || exit 1
+          sudo sh -c "echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf" || exit 1
+          sudo apt-get -y update || exit 1
+          sudo apt-get install -y cmake python3-pip git || exit 1
+          sudo pip3 install git+https://github.com/msaf1980/cget@custom_buildtype || exit 1
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          #brew update > /dev/null
+          sudo pip install git+https://github.com/msaf1980/cget@custom_buildtype || exit 1
+        else
+          echo "$RUNNER_OS not supported"
+          exit 1
+        fi
+      shell: bash
+    - name: Build (Release)
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
+    - name: Build (Release, Shared)
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_DEPS=shared   
+    - name: Build (Debug)
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
+    - name: Build (Debug, ASAN)
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DBUILD_DEPS=static
+    - name: Build (Release) (ASAN)
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DBUILD_DEPS=static
+    - name: Build (Debug, TSAN)
+      run: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSanDebug -DBUILD_DEPS=static
+    - name: Build (Release) (TSAN)
+      run: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSan -DBUILD_DEPS=static
