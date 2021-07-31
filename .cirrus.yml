@@ -9,7 +9,7 @@ task:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git
+        - DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip git
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static        
       release_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
@@ -30,7 +30,7 @@ task:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git
+        - DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip git
         - pip3 install setuptools==40.3
         - pip3 install click==6.6
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
@@ -48,7 +48,7 @@ task:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git pkg-config
+        - DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip git pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_DEPS=static        
       release_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_DEPS=static
@@ -71,7 +71,7 @@ task:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
+        - DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip git cmake gcc g++ pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static        
       release_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
@@ -82,6 +82,7 @@ task:
       release_tsan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSan -DBUILD_DEPS=static
       container:
         matrix:
+          - image: ubuntu:20.04
           - image: ubuntu:20.04
           - image: ubuntu:18.04
     - name: Build on FreeBSD
