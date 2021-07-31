@@ -48,7 +48,7 @@ jobs:
     - name: Build (Release)
       run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
     - name: Build (Release, Shared)
-      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_DEPS=shared   
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_DEPS=shared
     - name: Build (Debug)
       run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
     - name: Build (Debug, ASAN)
