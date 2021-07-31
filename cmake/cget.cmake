@@ -17,7 +17,6 @@ function(cget_init CGET_OPTS build_deps)
         execute_process(
             COMMAND cget init ${opts}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND_ERROR_IS_FATAL ANY
         )
     endif()
 endfunction ()
@@ -34,6 +33,5 @@ function(cget_install CGET_OPTS requirements_file)
     execute_process(
         COMMAND cget install ${opts}
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMAND_ERROR_IS_FATAL ANY
     )
 endfunction ()
