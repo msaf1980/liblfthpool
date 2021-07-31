@@ -66,19 +66,19 @@ task:
     - name: Build (gcc)
       env:
         LC_ALL: C.UTF-8
-        LANG: C.UTF-8    
+        LANG: C.UTF-8
       install_dependencies_script:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
         - DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip git cmake gcc g++ pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
-      debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static        
+      debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
       release_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
       release_shared_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_DEPS=shared
-      debug_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DBUILD_DEPS=static
+      debug_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DENABLE_UBSAN=ON -DBUILD_DEPS=static
       debug_tsan_script: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSanDebug -DBUILD_DEPS=static
-      release_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DBUILD_DEPS=static
+      release_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DENABLE_UBSAN=ON -DBUILD_DEPS=static
       release_tsan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSan -DBUILD_DEPS=static
       container:
         matrix:
@@ -92,9 +92,9 @@ task:
       debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
       release_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
       release_shared_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_DEPS=shared
-      debug_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DBUILD_DEPS=static
+      debug_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DENABLE_UBSAN=ON -DBUILD_DEPS=static
       debug_tsan_script: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSanDebug -DBUILD_DEPS=static
-      release_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DBUILD_DEPS=static
+      release_asan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DENABLE_UBSAN=ON -DBUILD_DEPS=static
       release_tsan_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSan -DBUILD_DEPS=static
       freebsd_instance:
         matrix:

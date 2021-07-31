@@ -40,6 +40,7 @@ jobs:
         elif [ "$RUNNER_OS" == "macOS" ]; then
           #brew update > /dev/null
           sudo pip install git+https://github.com/msaf1980/cget@custom_buildtype || exit 1
+          [ -x "/Library/Frameworks/Python.framework/Versions/2.7/bin/cget" ] && ln -s "/Library/Frameworks/Python.framework/Versions/2.7/bin/cget" /usr/local/bin/cget
         else
           echo "$RUNNER_OS not supported"
           exit 1
@@ -52,10 +53,10 @@ jobs:
     - name: Build (Debug)
       run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
     - name: Build (Debug, ASAN)
-      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DBUILD_DEPS=static
-    - name: Build (Release) (ASAN)
-      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DBUILD_DEPS=static
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DENABLE_UBSAN=ON -DBUILD_DEPS=static
     - name: Build (Debug, TSAN)
       run: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSanDebug -DBUILD_DEPS=static
+    - name: Build (Release) (ASAN)
+      run: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DENABLE_UBSAN=ON -DBUILD_DEPS=static
     - name: Build (Release) (TSAN)
       run: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSan -DBUILD_DEPS=static
