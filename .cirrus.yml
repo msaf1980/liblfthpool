@@ -88,7 +88,7 @@ task:
     - name: Build on FreeBSD
       install_dependencies_script:
         - pkg install -y bash gmake cmake git python38 py38-pip pkgconf
-        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
+        - pip-3.8 install git+https://github.com/msaf1980/cget@custom_buildtype
       debug_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
       release_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
       release_shared_script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_DEPS=shared
