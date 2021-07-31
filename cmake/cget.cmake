@@ -22,16 +22,13 @@ function(cget_init CGET_OPTS build_deps)
 endfunction ()
 
 function(cget_install CGET_OPTS requirements_file)
-   set(opts
-        --build-type ${CMAKE_BUILD_TYPE}
-        -f ${requirements_file}
-        -G "${CMAKE_GENERATOR}"
-    )
-
     set(${CGET_OPTS} "--build-type ${CMAKE_BUILD_TYPE} -f ${requirements_file} -G '${CMAKE_GENERATOR}'" PARENT_SCOPE)
-
+    message("  EXECUTE cget install --build-type ${CMAKE_BUILD_TYPE} -f ${requirements_file} -G '${CMAKE_GENERATOR}'")
     execute_process(
-        COMMAND cget install ${opts}
+        COMMAND cget install
+            --build-type ${CMAKE_BUILD_TYPE}
+            -f ${requirements_file}
+            -G "${CMAKE_GENERATOR}"
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endfunction ()
