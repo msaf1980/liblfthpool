@@ -19,10 +19,25 @@ task:
           - image: gcc:9
           - image: gcc:8
           - image: gcc:7
-          # - image: gcc:6
-          # - image: gcc:5
-          # - image: gcc:4.9
-          # - image: gcc:4.8
+    - name: Build (gcc, Release, python 3.4)
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8
+      install_dependencies_script:
+        - wget https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.sh -qO cmake.sh && sh cmake.sh --skip-license --prefix=/usr
+        - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
+        - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
+        - apt-get -y update
+        - apt-get install -y python3-pip git
+        - pip3 install setuptools==40.3
+        - pip3 install click==6.6
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
+      script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
+      container:
+        matrix:
+          - image: gcc:6
+          - image: gcc:5
+          - image: gcc:4.9
     - name: Build (gcc, Debug)
       install_dependencies_script:
         - wget https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.sh -qO cmake.sh && sh cmake.sh --skip-license --prefix=/usr
@@ -39,16 +54,48 @@ task:
           - image: gcc:9
           - image: gcc:8
           - image: gcc:7
-          - image: gcc:6
-          - image: gcc:5
-          - image: gcc:4.9
-    - name: Build (clang, Release)
+    - name: Build (gcc, Debug, python 3.4)
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8    
       install_dependencies_script:
         - wget https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.sh -qO cmake.sh && sh cmake.sh --skip-license --prefix=/usr
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
         - apt-get install -y python3-pip git
+        - pip3 install setuptools==40.3
+        - pip3 install click==6.6        
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
+      script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
+      container:
+        matrix:
+          - image: gcc:6
+          - image: gcc:5
+          - image: gcc:4.9
+    - name: Build (gcc, Release, python 3.4)
+      install_dependencies_script:
+        - wget https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.sh -qO cmake.sh && sh cmake.sh --skip-license --prefix=/usr
+        - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
+        - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
+        - apt-get -y update
+        - apt-get install -y python3-pip git
+        - pip3 install setuptools==40.3
+        - pip3 install click==6.6        
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
+      script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
+      container:
+        matrix:
+          - image: gcc:6
+          - image: gcc:5
+          - image: gcc:4.9          
+    - name: Build (clang, Release)
+      install_dependencies_script:
+        - wget https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.sh -qO cmake.sh && sh cmake.sh --skip-license --prefix=/usr
+        - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
+        - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
+        - apt-get -y update
+        - apt-get install -y python3-pip git pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_DEPS=static
       container:
@@ -67,7 +114,7 @@ task:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git
+        - apt-get install -y python3-pip git pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_DEPS=static
       container:
@@ -81,36 +128,43 @@ task:
           - image: silkeh/clang:5
           - image: silkeh/clang:4
     - name: Build (gcc, Debug)
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8    
       install_dependencies_script:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git cmake gcc g++
+        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEPS=static
       container:
         matrix:
           - image: ubuntu:20.04
-          - image: ubuntu:16.04
           - image: ubuntu:18.04
     - name: Build (gcc, Release)
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8    
       install_dependencies_script:
         - echo 'APT::Get::AllowUnauthenticated true;' > /etc/apt/apt.conf.d/disable-gpg.conf
         - echo 'Acquire::AllowInsecureRepositories true;' >> /etc/apt/apt.conf.d/disable-gpg.conf
         - apt-get -y update
-        - apt-get install -y python3-pip git cmake gcc g++
+        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
         - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPS=static
       container:
         matrix:
           - image: ubuntu:20.04
-          - image: ubuntu:16.04
           - image: ubuntu:18.04
     - name: Build (gcc, Debug, ASAN)
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8    
       install_dependencies_script:
         - apt-get update
-        - apt-get install -y python3-pip git cmake gcc g++
-        - pip install git+https://github.com/msaf1980/cget@custom_buildtype
+        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASanDebug -DBUILD_DEPS=static
       container:
         matrix:
@@ -119,10 +173,13 @@ task:
           - image: ubuntu:18.04
     - name: Build (gcc, Debug, TSAN)
       #only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_TAG != '' || $CIRRUS_PR != ''
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8      
       install_dependencies_script:
         - apt-get update
-        - apt-get install -y python3-pip git cmake gcc g++
-        - pip install git+https://github.com/msaf1980/cget@custom_buildtype
+        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSanDebug -DBUILD_DEPS=static
       container:
         matrix:
@@ -130,10 +187,13 @@ task:
           - image: ubuntu:16.04
           - image: ubuntu:18.04
     - name: Build (gcc, Release, ASAN)
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8    
       install_dependencies_script:
         - apt-get update
-        - apt-get install -y python3-pip git cmake gcc g++
-        - pip install git+https://github.com/msaf1980/cget@custom_buildtype
+        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=ASan -DBUILD_DEPS=static
       container:
         matrix:
@@ -142,10 +202,13 @@ task:
           - image: ubuntu:18.04
     - name: Build (gcc, Release, TSAN)
       # only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_TAG != '' || $CIRRUS_PR != ''
+      env:
+        LC_ALL: C.UTF-8
+        LANG: C.UTF-8      
       install_dependencies_script:
         - apt-get update
-        - apt-get install -y python3-pip git cmake gcc g++
-        - pip install git+https://github.com/msaf1980/cget@custom_buildtype
+        - apt-get install -y python3-pip git cmake gcc g++ pkg-config
+        - pip3 install git+https://github.com/msaf1980/cget@custom_buildtype
       script: TIMEOUT=2400 LOOP_COUNT=1000000 ./ci/run_tests.sh -DCMAKE_BUILD_TYPE=TSan -DBUILD_DEPS=static
       container:
         matrix:
