@@ -13,8 +13,7 @@ static void increment(void *p){
 }
 
 CTEST(lfthpool_pause_resume, test) {
-	int num_lfthpool = 4;
-	size_t i, jobs = 2;
+	size_t i, num_lfthpool = 4, jobs = 2;
 	int n = 0;
 
 	lfthpool_t pool = lfthpool_create(num_lfthpool, jobs);

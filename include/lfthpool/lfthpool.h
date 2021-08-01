@@ -28,7 +28,7 @@ typedef struct lfthpool* lfthpool_t;
  * @retval                   Returns a pointer to an initialised threadpool on
  *                           success or NULL on error (error code stored in errno).
  */
-lfthpool_t lfthpool_create(int workers, size_t queue_size);
+lfthpool_t lfthpool_create(size_t workers, size_t queue_size);
 
 /**
  * @brief  Count of workers lfthpool in thread poool

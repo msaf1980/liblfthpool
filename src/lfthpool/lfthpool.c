@@ -53,7 +53,7 @@ static void* _lfthpool_worker(void* _pool);
 
 /* ========================== THREADPOOL ============================ */
 
-lfthpool_t lfthpool_create(int workers, size_t queue_size) {
+lfthpool_t lfthpool_create(size_t workers, size_t queue_size) {
 	int err;
 	size_t i;
 	lfthpool_t pool;
@@ -69,12 +69,12 @@ lfthpool_t lfthpool_create(int workers, size_t queue_size) {
 
 	/* Pool settings */
 	pool->queue_size = size_to_power_of_2((size_t) queue_size);
-	pool->thread_count = (size_t) workers;
+	pool->thread_count = workers;
 
 	pool->running_count = 0;
 	pool->hold = 0;
 	/* allocate thread array */
-	pool->lfthpool = (pthread_t*) malloc(sizeof(pthread_t) * (size_t) pool->thread_count);
+	pool->lfthpool = (pthread_t*) malloc(sizeof(pthread_t) * pool->thread_count);
 	/* allocate task queue */
 	pool->task_queue = mpmc_ring_queue_new(pool->queue_size, NULL);
 

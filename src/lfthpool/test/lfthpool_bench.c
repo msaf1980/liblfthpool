@@ -54,7 +54,7 @@ static void *add_task_thread(void *p){
 	return NULL;
 }
 
-void bench(int writers, int readers, size_t loop_count) {
+void bench(size_t writers, size_t readers, size_t loop_count) {
 	size_t i;
 	uint64_t start, end, duration;
 	struct task_param param;
@@ -100,8 +100,8 @@ void bench(int writers, int readers, size_t loop_count) {
 	if (param.n != loop_count * (size_t) writers) {
 		ret++;	
 	}
-	printf("lfthpool, %d threads pool, %d writers (%f ms, %lu iterations, %llu ns/op, %llu op/s) [%s]\n",
-		readers, writers,
+	printf("lfthpool, %llu threads pool, %llu writers (%f ms, %lu iterations, %llu ns/op, %llu op/s) [%s]\n",
+		(unsigned long long) readers, (unsigned long long) writers,
 		((double) end - (double) start) / 1000,
 		(unsigned long) loop_count,
 		(unsigned long long) duration * 1000 / loop_count,
