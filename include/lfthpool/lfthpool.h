@@ -31,6 +31,16 @@ typedef struct lfthpool* lfthpool_t;
 lfthpool_t lfthpool_create(size_t workers, size_t queue_size);
 
 /**
+ * @brief  Creates a pool of worker lfthpool for later use
+ * @param  workers           Workers count (if < 1, hostcpu count is used).
+ * @param  queue_size        Maximum lenght of job queue for workers to take work from.
+ * @param  sleep_func        Sleep function (integrated with your scheduler). If NULL, sched_yield is used.
+ * @retval                   Returns a pointer to an initialised threadpool on
+ *                           success or NULL on error (error code stored in errno).
+ */
+lfthpool_t lfthpool_create_sched(size_t workers, size_t queue_size, int (*sleep_func)(useconds_t));
+
+/**
  * @brief  Count of workers lfthpool in thread poool
  * @param  pool            Threadpool
  */

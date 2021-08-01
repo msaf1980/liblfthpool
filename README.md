@@ -27,7 +27,8 @@ For a deeper look into the documentation check in the [lfthpool.h](https://githu
 
 | Function example                | Description                                                         |
 |---------------------------------|---------------------------------------------------------------------|
-| ***lfthpool_init(4, 1024)***            | Will return a new threadpool with `4` lfthpool and 1024 max queued (unproccessed) tasks.                        |
+| ***lfthpool_create(4, 1024)***            | Will return a new threadpool with `4` lfthpool and 1024 max queued (unproccessed) tasks.                        |
+| ***lfthpool_t lfthpool_create_sched(4, 1024, coro_yield)***             | Will return a new threadpool with `4` lfthpool, 1024 max queued (unproccessed) tasks and sleep function, integrated with custom scheduler.                        |
 | ***lfthpool_workers_count(pool)*** | Will return count of workers lfthpool in thread poool               |
 | ***lfthpool_add_task(pool, (void&#42;)function_p, (void&#42;)arg_p)*** | Will add new work to the pool. Work is simply a function. You can pass a single argument to the function if you wish. If not, `NULL` should be passed. Failed, if task queue is full. |
 | ***lfthpool_add_task_try(pool, (void&#42;)function_p, (void&#42;)arg_p, usec, max_try)*** | Will add new work to the pool. Work is simply a function. You can pass a single argument to the function if you wish. If not, `NULL` should be passed. |

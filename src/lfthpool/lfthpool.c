@@ -45,15 +45,21 @@ struct lfthpool {
 	volatile size_t thread_count;
 	mpmc_ring_queue *task_queue;    /* task queue */
 	size_t queue_size;
+	int (*sleep_func)(useconds_t usec); /* yield function */
 };
 
 /* ========================== THREADPOOL ============================ */
 
 static void* _lfthpool_worker(void* _pool);
 
-/* ========================== THREADPOOL ============================ */
+static int sched_usleep(useconds_t usec);
 
+/* ========================== THREADPOOL ============================ */
 lfthpool_t lfthpool_create(size_t workers, size_t queue_size) {
+	return lfthpool_create_sched(workers, queue_size, NULL);
+}
+
+lfthpool_t lfthpool_create_sched(size_t workers, size_t queue_size, int (*sleep_func)(useconds_t)) {
 	int err;
 	size_t i;
 	lfthpool_t pool;
@@ -66,6 +72,12 @@ lfthpool_t lfthpool_create(size_t workers, size_t queue_size) {
 	pool = (lfthpool_t) malloc(sizeof(struct lfthpool)); 
 	if (pool == NULL)
 		goto ERROR_ERRNO;
+
+	if (sleep_func) {
+		pool->sleep_func = sleep_func;
+	} else {
+		pool->sleep_func = sched_usleep;
+	}
 
 	/* Pool settings */
 	pool->queue_size = size_to_power_of_2((size_t) queue_size);
@@ -153,8 +165,11 @@ int lfthpool_add_task_try(lfthpool_t pool, void (*function)(void *), void* arg, 
 			errno = EAGAIN;
 			return -1;
 		}
-		sched_yield();
-		usleep(usec);
+		if (pool->sleep_func) {
+			pool->sleep_func(usec);
+		} else {
+			usleep(usec);
+		}
 	}
 
 	return 0;
@@ -178,8 +193,9 @@ size_t lfthpool_total_tasks(lfthpool_t pool) {
 
 void lfthpool_wait(lfthpool_t pool) {
 	while (mpmc_ring_queue_len_relaxed(pool->task_queue) + lfthpool_active_tasks(pool)) {
-		sched_yield();
-		usleep(10);
+		if (pool->sleep_func) {
+			pool->sleep_func(10);
+		}
 	}
 }
 
@@ -263,6 +279,12 @@ static void* _lfthpool_worker(void* p) {
 	}
 
 	return NULL;
+}
+
+static int sched_usleep(useconds_t usec) {
+	int ret = sched_yield();
+	usleep(usec);
+	return ret;
 }
 
 /* ========================== THREADPOOL THREAD ===================== */
