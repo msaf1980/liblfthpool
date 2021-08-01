@@ -11,8 +11,11 @@
 #include <ctest.h>
 
 static void sleep_job(void *p){
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"	
 	int *n = (int *) p;
 	__atomic_add_fetch(n, 1, __ATOMIC_RELEASE);
+#pragma GCC diagnostic pop	
 	puts("SLEPT");
 }
 
@@ -60,8 +63,11 @@ struct task_param {
 };
 
 static void increment_job(void *p){
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"
 	int *i = (int *) p;
 	__atomic_add_fetch(i, 1, __ATOMIC_RELEASE);
+#pragma GCC diagnostic pop	
 }
 
 static void *add_task_thread(void *p){
