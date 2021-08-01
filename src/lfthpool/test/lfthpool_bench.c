@@ -75,7 +75,9 @@ void bench(size_t writers, size_t readers, size_t loop_count) {
 
 	pthread_barrier_init(&param.start_barrier, NULL, (unsigned int) writers + 1);
 
-	t_handles = (pthread_t *) malloc((size_t) writers * sizeof(pthread_t));
+	pthread_attr_init(&thr_attr);
+    pthread_attr_setdetachstate(&thr_attr, PTHREAD_CREATE_JOINABLE);
+	t_handles = (pthread_t *) malloc(writers * sizeof(pthread_t));
 	for (i = 0; i < (size_t) writers; i++) {
 		perr = pthread_create(&t_handles[i], &thr_attr, add_task_thread, &param);
         if (perr) {

@@ -192,7 +192,7 @@ size_t lfthpool_total_tasks(lfthpool_t pool) {
 }
 
 void lfthpool_wait(lfthpool_t pool) {
-	while (mpmc_ring_queue_len_relaxed(pool->task_queue) + lfthpool_active_tasks(pool)) {
+	while (mpmc_ring_queue_len_relaxed(pool->task_queue) > 0 || lfthpool_active_tasks(pool) > 0) {
 		if (pool->sleep_func) {
 			pool->sleep_func(10);
 		}

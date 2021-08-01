@@ -74,7 +74,7 @@ static void *add_task_thread(void *p){
 	size_t i;
 	struct task_param *param = (struct task_param *) p;
 	for (i = 0; i < LOOP_COUNT; i++) {
-		lfthpool_add_task_try(param->pool, increment_job, &param->n, 10, 100);
+		lfthpool_add_task_try(param->pool, increment_job, &param->n, 10, 2000);
 	}
 	return NULL;
 }
@@ -87,7 +87,7 @@ CTEST(lfthpool_api, threads_test) {
     pthread_t t_handles[WRITERS];
 
 	param.n = 0;
-	param.pool = lfthpool_create(10, 10240);
+	param.pool = lfthpool_create(10, 1024000);
 
     pthread_attr_init(&thr_attr);
     pthread_attr_setdetachstate(&thr_attr, PTHREAD_CREATE_JOINABLE);
@@ -103,6 +103,10 @@ CTEST(lfthpool_api, threads_test) {
         pthread_join(t_handles[i], NULL);
 	}
 
+	lfthpool_wait(param.pool);
+	sched_yield();
+	usleep(300);
+	sched_yield();
 	lfthpool_wait(param.pool);
 
 	ASSERT_EQUAL_U(0, lfthpool_active_tasks(param.pool));
