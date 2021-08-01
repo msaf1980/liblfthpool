@@ -37,7 +37,7 @@ lfthpool_t lfthpool_create(int workers, size_t queue_size);
 size_t lfthpool_workers_count(lfthpool_t pool);
 
 /**
- * @brief   Add a task to a thread pool (no memory allocation, task reused from static queue)
+ * @brief   Add a task to a thread pool
  * @param	pool			Threadpool to add task to.
  * @param	function	Function/task for worker to execute.
  * @param	arg				Arguments to function/task.
@@ -46,7 +46,7 @@ size_t lfthpool_workers_count(lfthpool_t pool);
 int lfthpool_add_task(lfthpool_t pool, void (*function)(void *), void* arg);
 
 /**
- * @brief   Add a task to a thread pool (no memory allocation, task reused from static queue)
+ * @brief   Add a task to a thread pool
  * @param	pool			Threadpool to add task to.
  * @param	function	Function/task for worker to execute.
  * @param	arg				Arguments to function/task.
