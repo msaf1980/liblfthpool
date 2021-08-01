@@ -32,6 +32,9 @@ CTEST(lfthpool_api, test) {
 	lfthpool_add_task(pool, sleep_job, &n);
 	
 	lfthpool_wait(pool);
+	sched_yield();
+	usleep(200);
+	lfthpool_wait(pool);
 
 	ASSERT_EQUAL_U(0, lfthpool_active_tasks(pool));
 	ASSERT_EQUAL_U(0, lfthpool_total_tasks(pool));
@@ -45,6 +48,9 @@ CTEST(lfthpool_api, test) {
 	lfthpool_add_task(pool, sleep_job, &n);
 	lfthpool_add_task(pool, sleep_job, &n);
 
+	lfthpool_wait(pool);
+	sched_yield();
+	usleep(200);
 	lfthpool_wait(pool);
 
 	ASSERT_EQUAL_U(0, lfthpool_active_tasks(pool));
@@ -74,7 +80,7 @@ static void *add_task_thread(void *p){
 	size_t i;
 	struct task_param *param = (struct task_param *) p;
 	for (i = 0; i < LOOP_COUNT; i++) {
-		lfthpool_add_task_try(param->pool, increment_job, &param->n, 10, 2000);
+		lfthpool_add_task_try(param->pool, increment_job, &param->n, 10, 4000);
 	}
 	return NULL;
 }
@@ -108,6 +114,8 @@ CTEST(lfthpool_api, threads_test) {
 	usleep(300);
 	sched_yield();
 	lfthpool_wait(param.pool);
+
+	lfthpool_shutdown(param.pool);
 
 	ASSERT_EQUAL_U(0, lfthpool_active_tasks(param.pool));
 	ASSERT_EQUAL_U(0, lfthpool_total_tasks(param.pool));

@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
+#include <sched.h>
 
 #include <lfthpool/lfthpool.h>
 
@@ -19,6 +20,8 @@ CTEST(lfthpool_pause_resume, test) {
 	lfthpool_t pool = lfthpool_create(num_lfthpool, jobs);
 	
 	lfthpool_pause(pool);
+
+	sleep(1);
 	
 	/* Since pool is paused, lfthpool should not start before main's sleep */
 	for (i = 0; i < jobs; i++) {
@@ -32,7 +35,9 @@ CTEST(lfthpool_pause_resume, test) {
 	/* Now we will start lfthpool in no-parallel with main */
 	lfthpool_resume(pool);
 
-	sleep(2); /* Give some time to lfthpool to get the work */
+	lfthpool_wait(pool);
+	sched_yield();	
+	usleep(100); /* Give some time to lfthpool to get the work */
 
 	ASSERT_EQUAL_D((ssize_t) jobs, __atomic_load_n(&n, __ATOMIC_RELAXED), "lfthpool_resume not work");
 	

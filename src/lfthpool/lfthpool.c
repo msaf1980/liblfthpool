@@ -165,11 +165,7 @@ int lfthpool_add_task_try(lfthpool_t pool, void (*function)(void *), void* arg, 
 			errno = EAGAIN;
 			return -1;
 		}
-		if (pool->sleep_func) {
-			pool->sleep_func(usec);
-		} else {
-			usleep(usec);
-		}
+		pool->sleep_func(usec);
 	}
 
 	return 0;
@@ -193,9 +189,7 @@ size_t lfthpool_total_tasks(lfthpool_t pool) {
 
 void lfthpool_wait(lfthpool_t pool) {
 	while (mpmc_ring_queue_len_relaxed(pool->task_queue) > 0 || lfthpool_active_tasks(pool) > 0) {
-		if (pool->sleep_func) {
-			pool->sleep_func(10);
-		}
+		pool->sleep_func(10);
 	}
 }
 
@@ -203,7 +197,10 @@ void lfthpool_shutdown(lfthpool_t pool) {
 	size_t i;
 	__atomic_store_n(&pool->shutdown, 1, __ATOMIC_RELEASE);
 	for (i = 0; i < pool->thread_count; i++) {
-		pthread_join(pool->lfthpool[i], NULL);
+		if (pool->lfthpool[i]) {
+			pthread_join(pool->lfthpool[i], NULL);
+			pool->lfthpool[i] = 0;
+		}
 	}
 }
 

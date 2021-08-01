@@ -19,6 +19,8 @@ CTEST(lfthpool_worker, try_once) {
 	lfthpool_t pool = lfthpool_create(num_lfthpool, jobs);
 	
 	lfthpool_pause(pool);
+
+	sleep(1);
 	
 	/* Since pool is paused, lfthpool should not start before main's sleep */
 	for (i = 0; i < jobs; i++) {
@@ -32,6 +34,8 @@ CTEST(lfthpool_worker, try_once) {
     for (i = 0; i < jobs; i++) {
         ASSERT_EQUAL_D(0, lfthpool_worker_try_once(pool), "lfthpool_worker_try_once can't process task");
 	}
+
+	lfthpool_wait(pool);
 
     ASSERT_EQUAL_D(-1, lfthpool_worker_try_once(pool), "lfthpool_worker_try_once proccess task, it's error");
 	
