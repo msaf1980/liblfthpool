@@ -8,8 +8,8 @@
  *
  ********************************/
 
-#include <unistd.h>
 #include <signal.h>
+#include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -126,6 +126,35 @@ int lfthpool_add_task(lfthpool_t pool, void (*function)(void *), void* arg) {
 		free(task);
 		errno = EAGAIN;
 		return -1;
+	}
+
+	return 0;
+}
+
+int lfthpool_add_task_try(lfthpool_t pool, void (*function)(void *), void* arg, useconds_t usec, int max_try) {
+	/* set up task */
+	task_t *task = malloc(sizeof(task_t));
+	if (task == NULL) {
+		return -1;
+	}
+
+	task->function = function;
+	task->arg = arg;
+
+	for (; ; max_try--) {
+		qerr_t err = mpmc_ring_queue_enqueue(pool->task_queue, task);
+		if (err == QERR_OK) {
+			break;
+		} else if (err != QERR_FULL) {
+			free(task);
+			return (int) err;
+		} else if (max_try < 0) {
+			free(task);
+			errno = EAGAIN;
+			return -1;
+		}
+		sched_yield();
+		usleep(usec);
 	}
 
 	return 0;

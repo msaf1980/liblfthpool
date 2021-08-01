@@ -10,6 +10,11 @@
 
 #include <lfthpool/lfthpool.h>
 
+#include <pthread.h>
+#if NO_PTHREAD_BARRIER
+#include "pthread_barrier.h"
+#endif
+
 size_t LOOP_COUNT = 10000000;
 
 size_t v = 0;

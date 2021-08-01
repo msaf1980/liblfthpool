@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <unistd.h>
+
 /**
  * @file
 *
@@ -37,11 +39,22 @@ size_t lfthpool_workers_count(lfthpool_t pool);
 /**
  * @brief   Add a task to a thread pool (no memory allocation, task reused from static queue)
  * @param	pool			Threadpool to add task to.
- * @param	function		Function/task for worker to execute.
+ * @param	function	Function/task for worker to execute.
  * @param	arg				Arguments to function/task.
  * @retval					Returns 0 on success and -1 on error.
  */
 int lfthpool_add_task(lfthpool_t pool, void (*function)(void *), void* arg);
+
+/**
+ * @brief   Add a task to a thread pool (no memory allocation, task reused from static queue)
+ * @param	pool			Threadpool to add task to.
+ * @param	function	Function/task for worker to execute.
+ * @param	arg				Arguments to function/task.
+ * @param usec      Sleep (millisec).
+ * @param max_try   Try count (if queue is full).
+ * @retval					Returns 0 on success, -1 or QERR_* on error.
+ */
+int lfthpool_add_task_try(lfthpool_t pool, void (*function)(void *), void* arg, useconds_t usec, int max_try);
 
 /**
  * @brief  Pause tasks process in thread poool

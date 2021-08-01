@@ -29,7 +29,8 @@ For a deeper look into the documentation check in the [lfthpool.h](https://githu
 |---------------------------------|---------------------------------------------------------------------|
 | ***lfthpool_init(4, 1024)***            | Will return a new threadpool with `4` lfthpool and 1024 max queued (unproccessed) tasks.                        |
 | ***lfthpool_workers_count(pool)*** | Will return count of workers lfthpool in thread poool               |
-| ***lfthpool_add_task(pool, (void&#42;)function_p, (void&#42;)arg_p)*** | Will add new work to the pool. Work is simply a function. You can pass a single argument to the function if you wish. If not, `NULL` should be passed. |
+| ***lfthpool_add_task(pool, (void&#42;)function_p, (void&#42;)arg_p)*** | Will add new work to the pool. Work is simply a function. You can pass a single argument to the function if you wish. If not, `NULL` should be passed. Failed, if task queue is full. |
+| ***lfthpool_add_task_try(pool, (void&#42;)function_p, (void&#42;)arg_p, usec, max_try)*** | Will add new work to the pool. Work is simply a function. You can pass a single argument to the function if you wish. If not, `NULL` should be passed. |
 | ***lfthpool_wait(pool)***       | Will wait for all jobs (both in queue and currently running) to finish. |
 | ***lfthpool_destroy(pool)***    | This will destroy the threadpool. If jobs are currently being executed, then it will wait for them to finish. |
 | ***lfthpool_pause(pool)***      | All lfthpool in the threadpool will pause no matter if they are idle or executing work. |

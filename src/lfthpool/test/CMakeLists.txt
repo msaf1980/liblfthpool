@@ -4,10 +4,10 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 
 set(REQUIRED_SOURCES)
 
-# if(NOT HAVE_PTHREAD_BARRIER)
-#     add_definitions(-DNO_PTHREAD_BARRIER=1)
-#     list(APPEND REQUIRED_SOURCES ${PROJECT_SOURCE_DIR}/src/pthread_barrier.c)
-# endif()
+if(NOT HAVE_PTHREAD_BARRIER)
+    add_definitions(-DNO_PTHREAD_BARRIER=1)
+    list(APPEND REQUIRED_SOURCES ${PROJECT_SOURCE_DIR}/src/pthread_barrier.c)
+endif()
 
 set(TEST_LIBRARIES Threads::Threads)
 if (BUILD_SHARED_LIBS)
