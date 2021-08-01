@@ -10,10 +10,10 @@ if(NOT HAVE_PTHREAD_BARRIER)
 endif()
 
 set(TEST_LIBRARIES Threads::Threads)
-if (BUILD_SHARED_LIBS)
-    list(APPEND TEST_LIBRARIES lfthpool_shared ${LIBCONCURRENT_SHARED})
+if(BUILD_SHARED_LIBS)
+    list(APPEND TEST_LIBRARIES lfthpool_shared)
 else()
-    list(APPEND TEST_LIBRARIES lfthpool ${LIBCONCURRENT})
+    list(APPEND TEST_LIBRARIES lfthpool)
 endif()
 
 # Build tests
